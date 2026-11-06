@@ -1,0 +1,50 @@
+{
+  "version": 1,
+  "songs": [
+    {
+      "id": "first-rock-groove",
+      "title": "First Rock Groove",
+      "bpm": 70,
+      "difficulty": "beginner",
+      "chart": "songs/first-rock-groove.json",
+      "audio": null,
+      "description": "Original practice chart; backing audio forthcoming."
+    },
+    {
+      "id": "steady-eighths",
+      "title": "Steady Eighths",
+      "bpm": 90,
+      "difficulty": "intermediate",
+      "chart": "songs/steady-eighths.json",
+      "audio": null,
+      "description": "Original practice chart; backing audio forthcoming."
+    },
+    {
+      "id": "open-hat-rock",
+      "title": "Open Hat Rock",
+      "bpm": 100,
+      "difficulty": "intermediate",
+      "chart": "songs/open-hat-rock.json",
+      "audio": null,
+      "description": "Original practice chart; backing audio forthcoming."
+    },
+    {
+      "id": "tom-fill-workout",
+      "title": "Tom Fill Workout",
+      "bpm": 85,
+      "difficulty": "intermediate",
+      "chart": "songs/tom-fill-workout.json",
+      "audio": null,
+      "description": "Original practice chart; backing audio forthcoming."
+    },
+    {
+      "id": "full-kit-jam",
+      "title": "Full Kit Jam",
+      "bpm": 110,
+      "difficulty": "advanced",
+      "chart": "songs/full-kit-jam.json",
+      "audio": null,
+      "description": "Original practice chart; backing audio forthcoming."
+    }
+  ]
+}
