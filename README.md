@@ -1,15 +1,34 @@
 # Nitro Beat Lab
 
-Browser-based drum learning game for the Alesis Nitro Mesh. The project is being migrated from a working local v0.3 prototype to v0.4 with song support.
+Free, browser-based rhythm-game drum trainer for Alesis Nitro Mesh and other USB-MIDI electronic drums.
 
-## Song chart library
+## Current status (v0.4)
 
-The `songs/` folder contains five original practice charts and `songs/manifest.json` catalogs them. The charts are preloaded repository assets, but the playable application and accompanying audio are **not yet deployed**. These are not commercial song transcriptions.
+The browser app is committed at [index.html](index.html). Five original practice charts are listed in [songs/manifest.json](songs/manifest.json) and load on demand. Simple synthesized drum-and-bass backing sounds are generated in your browser during play, not streamed from commercial recordings.
 
-Chart notes use quarter-note beat positions, with entries like `[0,"kick"]` and `[0.5,"hat","closed"]`. BPM is fixed per chart. Supported instruments: kick, snare, hat, tom1, tom2, tom3, crash, ride. Hi-hat articulations: closed, open, pedal.
+- Eight individual kit lanes: kick, snare, closed/open/pedal hi-hat, three toms, crash and ride
+- USB-MIDI input in Chrome or Edge; MIDI note event monitor
+- Saved pad mappings in browser localStorage (each computer configures its own)
+- Falling notes, accuracy, score, practice tempo, loop, calibration
+- JSON chart importing from your computer
+- Lightweight static app; no account, database or subscription
 
-## Next deployment
+**Not yet included in this hosted build:** MP3/WAV playback and Standard MIDI File chart import present in the prior local v0.4 prototype. Commercial music is not redistributed.
 
-Publish the v0.4 application files and original licensed backing audio, then enable GitHub Pages at Settings → Pages → Deploy from a branch → main / root. The app will load `songs/manifest.json` and chart/audio assets through relative URLs. Modern Chrome/Edge over HTTPS supports Web MIDI permission requests.
+## Enable sharing with GitHub Pages
 
-Personal MIDI mappings remain local to each browser; music that users independently import stays local.
+Repository owner: Settings → Pages → Build and deployment → Deploy from a branch → `main` → `/(root)` → Save.
+
+Once Pages finishes publishing, use: https://sundaymultiplied.github.io/nitro-beat-lab/
+
+If enabling Pages is already complete, the page may take a short while to become available. Access the site with Chrome or Edge over HTTPS, connect the Nitro kit via a USB-A to USB-B cable, and allow MIDI access in the browser.
+
+## Data format
+
+Each JSON drum chart has `title`, `bpm` and `notes` (an array of tuples like `[0, "kick"]` and `[0.5, "hat", "closed"]`). Timestamps are in quarter-note beats (zero-based). Supported lane names: `kick`, `snare`, `hat`, `tom1`, `tom2`, `tom3`, `crash`, `ride`. Hi-hat articulations: `closed`, `open`, `pedal`.
+
+## Development
+
+No build dependencies: the static app is contained in `index.html`. Load via HTTPS (GitHub Pages) or a local HTTP server on localhost. Do not open directly with `file://` for hosted chart fetching/MIDI.
+
+We use only original chart assets in this repository. Please upload audio or charts only when you have rights to distribute them.
