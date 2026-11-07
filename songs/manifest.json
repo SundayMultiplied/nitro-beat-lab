@@ -8,7 +8,7 @@
       "difficulty": "beginner",
       "chart": "songs/first-rock-groove.json",
       "audio": null,
-      "description": "Original practice chart; backing audio forthcoming."
+      "description": "Original practice chart with synthesized in-browser backing groove."
     },
     {
       "id": "steady-eighths",
@@ -17,7 +17,7 @@
       "difficulty": "intermediate",
       "chart": "songs/steady-eighths.json",
       "audio": null,
-      "description": "Original practice chart; backing audio forthcoming."
+      "description": "Original practice chart with synthesized in-browser backing groove."
     },
     {
       "id": "open-hat-rock",
@@ -26,7 +26,7 @@
       "difficulty": "intermediate",
       "chart": "songs/open-hat-rock.json",
       "audio": null,
-      "description": "Original practice chart; backing audio forthcoming."
+      "description": "Original practice chart with synthesized in-browser backing groove."
     },
     {
       "id": "tom-fill-workout",
@@ -35,7 +35,7 @@
       "difficulty": "intermediate",
       "chart": "songs/tom-fill-workout.json",
       "audio": null,
-      "description": "Original practice chart; backing audio forthcoming."
+      "description": "Original practice chart with synthesized in-browser backing groove."
     },
     {
       "id": "full-kit-jam",
@@ -44,7 +44,7 @@
       "difficulty": "advanced",
       "chart": "songs/full-kit-jam.json",
       "audio": null,
-      "description": "Original practice chart; backing audio forthcoming."
+      "description": "Original practice chart with synthesized in-browser backing groove."
     }
   ]
 }
