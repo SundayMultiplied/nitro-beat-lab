@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nitro Beat Lab v0.4.4</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nitro Beat Lab v0.4.5</title>
 <style>
 :root{font-family:system-ui,Segoe UI,sans-serif;color:#eaf0ff;background:#0c1221}*{box-sizing:border-box}body{margin:0}main{max-width:1180px;margin:auto;padding:18px}header,.actions,.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}header{justify-content:space-between}h1{font-size:25px;margin:0}h2{font-size:16px;margin:0 0 12px}.dim{color:#a8b7d3;font-size:13px}.grid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;margin-top:17px}.card{background:#172139;border:1px solid #354361;border-radius:14px;padding:16px;margin-bottom:14px}button,select,input{font:inherit}button,select{padding:10px;border:1px solid #586c95;background:#263653;color:#fff;border-radius:8px}button{cursor:pointer}button:hover{background:#3c5380}.primary{background:#5268e9}label{font-size:13px}input[type=range]{vertical-align:middle;max-width:130px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.stat{background:#26344f;padding:11px;border-radius:8px}.stat b{display:block;font-size:21px}canvas{width:100%;height:auto;background:#090f1e;border-radius:8px}#drumpads{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:10px}#drumpads button{font-size:11px;padding:10px 2px;border-bottom:5px solid var(--c)}#drumpads button.active{filter:brightness(1.9)}#log{height:150px;overflow:auto;background:#0b1325;border-radius:7px;padding:10px;white-space:pre-wrap;font:12px/1.5 Consolas,monospace;color:#b7f4d1}#maps{display:grid;gap:6px}.map{display:grid;grid-template-columns:80px 1fr 60px;align-items:center;font-size:12px;gap:5px}.map button{padding:5px}small{color:#a8b7d3}#status{color:#a3efcb}input[type=file]{max-width:210px}.songnotice{font-size:12px;color:#d7c58a}@media(max-width:870px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 
@@ -28,7 +28,7 @@ summary::marker{color:#a997ff}.settings-inner{padding:12px 0 4px;display:grid;ga
 #sidebar{position:relative;padding-top:0}#sidebarToggle{position:relative;display:block;margin:0 0 10px auto;border-radius:9px;padding:8px 11px;font-size:12px}
 .sidebar-reopen{display:none;margin-left:auto;white-space:nowrap}.grid.sidebar-hidden+.sidebar-reopen{display:block}
 #laneorder .lane-order-item{gap:4px;padding:5px 7px}.lane-order-item b{font-size:11px}.drum-art{width:33px;height:33px;display:block;flex-shrink:0;filter:drop-shadow(0 2px 3px #05091b88)}
-.drum-art svg{width:100%;height:100%;display:block}
+.drum-art{background-size:400% 200%;background-repeat:no-repeat; background-color:transparent;filter:drop-shadow(0 0 6px #75baff5e)}
 #drumpads button{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;min-height:76px;padding:4px 1px}
 #drumpads .drum-art{width:min(52px,80%);height:43px}.lane-order-item .drum-art{width:34px;height:34px}
 @media(max-width:870px){#drumpads button{font-size:9px;min-height:63px}#drumpads .drum-art{height:32px}}
@@ -43,7 +43,7 @@ summary::marker{color:#a997ff}.settings-inner{padding:12px 0 4px;display:grid;ga
 #sidebarToggle{margin:0 0 10px auto}
 @media(max-width:870px){#layout{grid-template-columns:minmax(0,1fr)}#layout>aside{grid-row:2}}
 </style></head>
-<body><main><header><div><h1>🥁 Nitro Beat Lab <small>v0.4.4</small></h1><div class="dim">Alesis Nitro Mesh · original song library · no subscriptions</div></div><div class="actions"><span id="midi">MIDI disconnected</span><button id="connect" class="primary">Connect MIDI Kit</button></div></header>
+<body><main><header><div><h1>🥁 Nitro Beat Lab <small>v0.4.5</small></h1><div class="dim">Alesis Nitro Mesh · original song library · no subscriptions</div></div><div class="actions"><span id="midi">MIDI disconnected</span><button id="connect" class="primary">Connect MIDI Kit</button></div></header>
 <div class="grid" id="layout"><section>
 <div class="card settings-card" id="settings"><button type="button" class="settings-toggle" id="settingsToggle" aria-expanded="true" aria-controls="settingsBody"><span><span class="settings-title">Song &amp; Practice Settings</span><span class="settings-summary" id="settingsSummary">Choose a song and set up your practice</span></span><span class="settings-chevron" aria-hidden="true">⌄</span></button><div class="settings-inner" id="settingsBody"><div class="controls"><label>Song <select id="song"><option value="">Loading library…</option></select></label><label>Tempo <input id="tempo" type="range" min="45" max="150" step="1" value="80"><b id="bpm">80 BPM</b></label><label>Note travel <select id="travel"><option value="2">2 sec</option><option value="3" selected>3 sec</option><option value="4">4 sec</option></select></label></div><p class="dim" id="description">Select a practice song. Audio is generated locally to match the chart.</p><div class="controls"><label>Import your own JSON chart <input id="chartfile" type="file" accept=".json,application/json"></label><span class="dim" id="importstatus"></span></div><div class="layout-tools"><strong>Reorder lanes</strong><span class="dim">Use ◀ and ▶ to match your physical kit.</span><button id="resetorder">Reset order</button></div><div id="laneorder" aria-label="Lane order"></div></div></div>
 <div class="actions"><button id="play" class="primary">▶ Start (Space)</button><button id="restart">↻ Restart</button><label><input type="checkbox" id="loop" checked> Loop</label><label><input type="checkbox" id="sound" checked> Backing groove</label><label><input type="checkbox" id="click" checked> Metronome</label></div>
@@ -53,23 +53,22 @@ summary::marker{color:#a997ff}.settings-inner{padding:12px 0 4px;display:grid;ga
 'use strict';
 const $=id=>document.getElementById(id);
 const names=['kick','snare','hat','tom1','tom2','tom3','crash','ride'];
-const colors=['#ff4da3','#35caff','#ffe347','#30ffa6','#17e7d7','#00bca7','#c777ff','#ff9d24'];
-const titles=['KICK','SNARE','HI-HAT','TOM 1','TOM 2','TOM 3','CRASH','RIDE'];
-// Original vector drum illustrations: self-contained and reusable in DOM and Canvas.
-function drumSvg(n){
- const k=names.indexOf(n),col=colors[k];
- const base='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 64" role="img" aria-label="'+titles[k]+'"><g stroke="#12182f" stroke-width="3.4" stroke-linejoin="round" stroke-linecap="round">';
- let shape='';
- if(n==='kick'){shape='<circle cx="38" cy="30" r="26" fill="'+col+'"/><circle cx="38" cy="30" r="19" fill="#e9f4ff"/><circle cx="38" cy="30" r="9" fill="#455b8d"/><path d="M12 54h52M20 54l-8 6M56 54l8 6" fill="none"/>'}
- else if(n==='snare'){shape='<ellipse cx="38" cy="21" rx="28" ry="12" fill="#eef8ff"/><path d="M10 21v18q28 22 56 0V21" fill="'+col+'"/><ellipse cx="38" cy="21" rx="28" ry="12" fill="#f5faff"/><path d="M18 40L12 61M58 40l6 21M38 43v17" fill="none"/>'}
- else if(n.startsWith('tom')){const size=n==='tom3'?25:21;shape='<path d="M15 19h46v25q-23 14-46 0Z" fill="'+col+'"/><ellipse cx="38" cy="19" rx="23" ry="10" fill="#f4f8ff"/><path d="M18 43l-7 17M58 43l7 17M38 48v12" fill="none"/><path d="M25 34v9M51 34v9" stroke="#fff" stroke-width="3"/>'}
- else if(n==='hat'){shape='<path d="M38 18V60M14 49h48" fill="none"/><ellipse cx="38" cy="19" rx="30" ry="8" fill="'+col+'"/><ellipse cx="38" cy="28" rx="27" ry="7" fill="#f5cc3d"/><path d="M13 32l50-2" fill="none"/><path d="M28 61h20" fill="none"/>'}
- else {shape='<path d="M38 23v37M21 60h34" fill="none"/><ellipse cx="38" cy="21" rx="32" ry="'+(n==='crash'?'12':'9')+'" fill="'+col+'"/><ellipse cx="38" cy="21" rx="17" ry="5" fill="#ffffff70" stroke="none"/><circle cx="38" cy="18" r="3" fill="#111d3d"/>'}
- return base+shape+'</g></svg>';
+const colors=['#ff4958','#39baff','#ffe336','#78f848','#42ecc0','#17e9e3','#e74df1','#ff9b2e'];
+const titles=['BASS DRUM','SNARE','HI-HAT','TOM 1','TOM 2','FLOOR TOM','CRASH','RIDE'];
+// The user's neon instrument artwork is stored as an optimized 4x2 sprite sheet.
+// Tile order: kick, snare, hi-hat, tom1 / tom2, floor tom, crash, ride.
+const iconSheet=new Image();
+iconSheet.src='assets/drum-icons-sprite.png';
+const iconPos=Object.fromEntries(names.map((name,i)=>[name,{x:(i%4)*48,y:Math.floor(i/4)*48}]));
+function artElement(name){
+ const holder=document.createElement('span');
+ holder.className='drum-art';
+ holder.setAttribute('role','img');
+ holder.setAttribute('aria-label',titles[names.indexOf(name)]);
+ holder.style.backgroundImage='url("assets/drum-icons-sprite.png")';
+ holder.style.backgroundPosition=((names.indexOf(name)%4)/3*100)+'% '+(Math.floor(names.indexOf(name)/4)*100)+'%';
+ return holder;
 }
-const drumArt={};for(const n of names){const img=new Image();img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(drumSvg(n));drumArt[n]=img}
-function artElement(n){const holder=document.createElement('span');holder.className='drum-art';holder.innerHTML=drumSvg(n);return holder}
-
 let laneOrder=(()=>{try{const saved=JSON.parse(localStorage.getItem('nitroLaneOrder')||'null');return Array.isArray(saved)&&saved.length===8&&saved.every(n=>names.includes(n))&&new Set(saved).size===8?saved:names.slice()}catch{return names.slice()}})();
 let flashes=[],feedbackUntil=0, laneBursts=[];
 function showFeedback(text,color){$('feedback').textContent=text;$('feedback').style.color=color;feedbackUntil=performance.now()+650;setTimeout(()=>{if(performance.now()>=feedbackUntil)$('feedback').textContent=''},720)}
@@ -114,7 +113,7 @@ const lane=laneOrder[i],k=names.indexOf(lane),x=i*cw;
 const gradient=ctx.createLinearGradient(x,0,x+cw,h);gradient.addColorStop(0,i%2?'#121b3c':'#1b2650');gradient.addColorStop(1,i%2?'#19265a':'#26326b');
 ctx.fillStyle=gradient;ctx.fillRect(x+2,0,cw-4,h);
 ctx.strokeStyle=colors[k]+'70';ctx.lineWidth=2;ctx.strokeRect(x+3,0,cw-6,h);
-ctx.fillStyle=colors[k];ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.shadowColor=colors[k];ctx.shadowBlur=12;ctx.fillText(titles[k],x+cw/2,h-13);if(drumArt[lane].complete&&drumArt[lane].naturalWidth)ctx.drawImage(drumArt[lane],x+cw/2-27,h-77,54,50);
+ctx.fillStyle=colors[k];ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.shadowColor=colors[k];ctx.shadowBlur=12;ctx.fillText(titles[k],x+cw/2,h-13);if(iconSheet.complete&&iconSheet.naturalWidth){const pos=iconPos[lane];ctx.drawImage(iconSheet,pos.x,pos.y,48,48,x+cw/2-27,h-80,54,54)}
 ctx.beginPath();ctx.arc(x+cw/2,hitY,15,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
 }
 const speed=(hitY-10)/(Number($('travel').value)*tempo/60);
