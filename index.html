@@ -22,7 +22,7 @@ summary::marker{color:#a997ff}.settings-inner{padding:12px 0 4px;display:grid;ga
 
 /* v0.4.3: compact settings, panel-owned toggles, illustrated pads */
 .settings-card{margin-bottom:14px}.settings-toggle{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;padding:8px 3px;border:0;background:transparent;box-shadow:none;text-align:left;cursor:pointer;color:#f6f6ff}
-.settings-toggle:hover{background:transparent}.settings-title{font-size:16px;font-weight:750}.settings-summary{font-size:12px;color:#a9b8e3;margin-top:3px;font-weight:400}.settings-chevron{font-size:21px;color:#b5a8ff;transition:transform .17s ease}
+.settings-toggle:hover{background:transparent}.settings-title{font-size:16px;font-weight:750;display:block}.settings-summary{display:block}.settings-summary{font-size:12px;color:#a9b8e3;margin-top:3px;font-weight:400}.settings-chevron{font-size:21px;color:#b5a8ff;transition:transform .17s ease}
 .settings-card.is-closed .settings-chevron{transform:rotate(-90deg)}.settings-card.is-closed .settings-inner{display:none}
 .settings-card .settings-inner{border-top:1px solid #405780;margin-top:10px;padding-top:16px}
 #sidebar{position:relative;padding-top:0}#sidebarToggle{position:relative;display:block;margin:0 0 10px auto;border-radius:9px;padding:8px 11px;font-size:12px}
@@ -144,7 +144,7 @@ function validate(raw){if(!raw||!Array.isArray(raw.notes))throw Error('Missing n
 function choose(c){chart=validate(c);playFrom=0;$('fromBar').value=1;$('toBar').value=Math.ceil(chart.bars);refreshRegion();tempo=Math.min(150,Math.max(45,chart.bpm));$('tempo').value=tempo;$('bpm').textContent=tempo+' BPM';updateSettingsSummary();$('description').textContent=chart.title+' · '+chart.bpm+' BPM · '+Math.ceil(chart.bars)+' bars · '+chart.notes.length+' notes';restart()}
 async function loadLibrary(){try{const r=await fetch('songs/manifest.json');if(!r.ok)throw Error('Catalog unavailable');const m=await r.json();catalog=m.songs||[];const s=$('song');s.replaceChildren();for(const item of catalog){const o=document.createElement('option');o.value=item.chart;o.textContent=item.title+' ('+item.bpm+' BPM)';s.append(o)}s.onchange=selectSong;await selectSong()}catch(e){$('description').textContent='Built-in library unavailable: '+e.message+' — you can import a JSON chart';$('song').replaceChildren()}}
 async function selectSong(){const item=catalog.find(x=>x.chart===$('song').value);if(!item)return;try{const r=await fetch(item.chart);if(!r.ok)throw Error('Chart not found');choose(await r.json());$('description').textContent+=' · '+item.description}catch(e){$('status').textContent='Load failed: '+e.message}}
-$('chartfile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const c=JSON.parse(await f.text());choose(c);$('importstatus').textContent=' Chart loaded locally';$('song').value='';}catch(err){$('importstatus').textContent=' Import failed: '+err.message}};
+$('chartfile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const c=JSON.parse(await f.text());choose(c);$('importstatus').textContent=' Chart loaded locally';$('song').value='';updateSettingsSummary();}catch(err){$('importstatus').textContent=' Import failed: '+err.message}};
 function restart(){playing=false;paused=false;pauseBeat=playFrom;lastSound=Math.floor(playFrom)-1;resetTrackTime();notes=chart?chart.notes.map(n=>({...n,state:n.beat<playFrom?'skipped':'pending'})):[];total=notes.filter(n=>n.state==='pending'&&n.beat<regionEnd).length;score=hits=misses=wrong=streak=0;flashes=[];laneBursts=[];$('feedback').textContent='';hud();$('play').textContent='▶ Start (Space)';$('status').textContent='Ready'}
 function hud(){$('score').textContent=score;$('accuracy').textContent=hits+misses+wrong?Math.round(hits/(hits+misses+wrong)*100)+'%':'—';$('streak').textContent=streak;$('progress').textContent=(hits+misses+wrong)+' / '+total}
 function beat(){if(audioTrack&&audioStarted&&playing)return audioTrack.currentTime*chart.bpm/60;return (performance.now()-beatStart)/(60000/tempo)}
@@ -214,7 +214,7 @@ else if(!paused){ctx.fillStyle='#fff';ctx.font='bold 24px system-ui';ctx.textAli
 }
 for(let i=0;i<8;i++){const p=document.createElement('button');p.id='pad-'+names[i];p.append(artElement(names[i]),document.createTextNode(titles[i]));p.style.setProperty('--c',colors[i]);p.onclick=()=>hit(names[i],names[i]==='hat'?'closed':null);$('drumpads').append(p)}
 renderLaneOrder();renderPadOrder();
-function updateSettingsSummary(){const text=$('song').selectedOptions?.[0]?.textContent||chart?.title||'Choose a song';$('settingsSummary').textContent=text+' · '+tempo+' BPM'}
+function updateSettingsSummary(){const text=chart?.title||$('song').selectedOptions?.[0]?.textContent||'Choose a song';$('settingsSummary').textContent=text+' · '+tempo+' BPM'}
 function setSettingsOpen(open){$('settings').classList.toggle('is-closed',!open);$('settingsToggle').setAttribute('aria-expanded',String(open));localStorage.setItem('nitroSettingsExpanded',open?'1':'0')}
 $('settingsToggle').onclick=()=>setSettingsOpen($('settings').classList.contains('is-closed'));
 setSettingsOpen(localStorage.getItem('nitroSettingsExpanded')!=='0');
