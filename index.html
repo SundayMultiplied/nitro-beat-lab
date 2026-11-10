@@ -74,7 +74,7 @@ summary::marker{color:#a997ff}.settings-inner{padding:12px 0 4px;display:grid;ga
 <strong>Backing music &amp; section practice</strong>
 <div class="controls"><label>Load your own MP3/WAV <input type="file" id="audiofile" accept="audio/*,.mp3,.wav,.m4a,.ogg"></label><button type="button" id="clearAudio">Remove audio</button><span id="trackName">Using synthesized practice groove</span></div>
 <div class="controls"><label>From bar <input type="number" id="fromBar" min="1" value="1" step="1"></label><label>To bar <input type="number" id="toBar" min="1" value="8" step="1"></label><button type="button" id="wholeSong">Whole chart</button><label class="loop-option"><input type="checkbox" id="loop" checked> Loop selected bars</label><button type="button" class="primary" id="playSection">▶ Play selected bars</button><span id="sectionInfo" role="status">Bars 1–8</span></div>
-<div class="controls"><label><input type="checkbox" id="countin" checked> Four-beat count-in</label><span class="dim">Tempo slider also slows backing audio, generally without changing pitch.</span></div>
+<div class="controls"><label><input type="checkbox" id="countin" checked> Four-beat count-in</label><span class="dim">Tempo changes both notes and audio. In seamless loop mode, audio pitch may also change.</span></div>
 <div class="controls"><label for="transportPosition">Position</label><input type="range" id="transportPosition" min="1" max="8" step="1" value="1" aria-label="Start at bar"><span id="position">Bar 1</span></div>
 </div></div></div>
 <div class="actions"><button id="play" class="primary">▶ Start (Space)</button><button id="restart">↻ Restart</button><label><input type="checkbox" id="sound" checked> Backing groove</label><label><input type="checkbox" id="click" checked> Metronome</label></div>
@@ -122,6 +122,7 @@ function stopLoopSource(){if(loopSource){try{loopSource.stop()}catch{}try{loopSo
 function useBufferLoop(){return Boolean(audioTrack&&decodedAudio&&$('loop').checked&&chart&&regionEnd>regionStart&&decodedAudio.duration>=regionEnd*60/chart.bpm-.05)}
 function launchBufferLoop(startBeat,countBeats=0){
  if(!useBufferLoop())return false;
+ if(startBeat<regionStart){countBeats+=regionStart-startBeat;startBeat=regionStart}
  stopLoopSource();
  audio();
  const source=context.createBufferSource();
@@ -178,7 +179,7 @@ $('wholeSong').onclick=()=>{if(!chart)return;$('fromBar').value=1;$('toBar').val
 for(const id of ['fromBar','toBar'])$(id).onchange=()=>{const r=getRegion();setPlayFromBar(r.a)};
 $('playSection').onclick=()=>{const r=getRegion();$('loop').checked=true;setPlayFromBar(r.a);start()};
 $('transportPosition').onchange=e=>setPlayFromBar(+e.target.value);
-$('loop').onchange=refreshRegion;
+$('loop').onchange=()=>{refreshRegion();if(playing||paused)restart()};
 const defaults={kick:[36],snare:[38,40],hat_closed:[42],hat_open:[46],hat_pedal:[44],tom1:[48,50],tom2:[45,47],tom3:[43,41],crash:[49,55,57],ride:[51,53,59]};
 let map,access=null,learn=null,chart=null,catalog=[],notes=[],playing=false,paused=false,beatStart=0,pauseBeat=0,tempo=80,offset=0,loop=0,score=0,hits=0,misses=0,wrong=0,streak=0,total=0,log=[],anim=null,context=null,renderBeat=-99,lastSound=-5;
 try{map={...structuredClone(defaults),...JSON.parse(localStorage.getItem('nitroV4Map')||'{}')}}catch{map=structuredClone(defaults)}
@@ -227,7 +228,7 @@ ctx.fillStyle=colors[k];ctx.font='bold 15px system-ui';ctx.textAlign='center';ct
 ctx.beginPath();ctx.arc(x+cw/2,hitY,15,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
 }
 const speed=(hitY-10)/(Number($('travel').value)*tempo/60);
-for(let k=Math.max(0,Math.floor(b));k<b+5*tempo/60;k++){const y=hitY-(k-b)*speed;if(y>0&&y<hitY){ctx.strokeStyle=k%4===0?'#b5c5ff99':'#6e80a94a';ctx.lineWidth=k%4===0?2:1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}}
+for(let k=Math.max(0,Math.floor(b));k<Math.min(regionEnd,b+5*tempo/60);k++){const y=hitY-(k-b)*speed;if(y>0&&y<hitY){ctx.strokeStyle=k%4===0?'#b5c5ff99':'#6e80a94a';ctx.lineWidth=k%4===0?2:1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke()}}
 // Full-lane response to physical hits. Color and duration show outcome.
 const frameNow=performance.now();
 laneBursts=laneBursts.filter(f=>frameNow-f.at<400);
@@ -277,6 +278,6 @@ $('settingsToggle').onclick=()=>setSettingsOpen($('settings').classList.contains
 setSettingsOpen(localStorage.getItem('nitroSettingsExpanded')!=='0');
 $('resetorder').onclick=()=>{laneOrder=names.slice();localStorage.removeItem('nitroLaneOrder');renderLaneOrder();renderPadOrder()};function setSidebarHidden(hide){$('layout').classList.toggle('sidebar-hidden',hide);$('sidebarReopen').style.display=hide?'block':'none';$('sidebarToggle').setAttribute('aria-expanded',String(!hide));localStorage.setItem('nitroSidebarHidden',hide?'1':'0')}
 $('sidebarToggle').onclick=()=>setSidebarHidden(true);$('sidebarReopen').onclick=()=>setSidebarHidden(false);setSidebarHidden(localStorage.getItem('nitroSidebarHidden')==='1');const keys={a:'kick',s:'snare',d:'hat',e:'hat',r:'hat',f:'tom1',g:'tom2',h:'tom3',j:'crash',k:'ride'};document.addEventListener('keydown',e=>{if(e.target.matches('input,select,button'))return;if(e.code==='Space'){e.preventDefault();start();return}const name=keys[e.key.toLowerCase()];if(name&&!e.repeat)hit(name,e.key.toLowerCase()==='e'?'open':e.key.toLowerCase()==='r'?'pedal':name==='hat'?'closed':null)});
-$('play').onclick=()=>start();$('restart').onclick=restart;$('tempo').oninput=()=>{const b=playing?beat():0;tempo=+$('tempo').value;$('bpm').textContent=tempo+' BPM';updateSettingsSummary();if(playing){beatStart=performance.now()-b*60000/tempo;if(loopSource){const oldBeat=beat();const remainingBeat=oldBeat;stopLoopSource();launchBufferLoop(remainingBeat,0)}audioRate()}else audioRate()};$('offset').oninput=()=>{offset=+$('offset').value;$('offsetview').textContent=offset+' ms';localStorage.setItem('nitroOffset',offset)};$('resetmap').onclick=()=>{map=structuredClone(defaults);localStorage.removeItem('nitroV4Map');renderMap()};
+$('play').onclick=()=>start();$('restart').onclick=restart;$('tempo').oninput=()=>{const b=playing?beat():0;tempo=+$('tempo').value;$('bpm').textContent=tempo+' BPM';updateSettingsSummary();if(playing){beatStart=performance.now()-b*60000/tempo;if(loopSource){stopLoopSource();launchBufferLoop(b,0)}audioRate()}else audioRate()};$('offset').oninput=()=>{offset=+$('offset').value;$('offsetview').textContent=offset+' ms';localStorage.setItem('nitroOffset',offset)};$('resetmap').onclick=()=>{map=structuredClone(defaults);localStorage.removeItem('nitroV4Map');renderMap()};
 renderMap();loadLibrary();requestAnimationFrame(render);
 </script></body></html>
