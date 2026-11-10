@@ -2,7 +2,7 @@
 
 Free, browser-based rhythm-game drum trainer for Alesis Nitro Mesh and other USB-MIDI electronic drums.
 
-## Current status (v0.5 beta)
+## Current status (v0.5.1 beta)
 
 The browser app is committed at [index.html](index.html). Five original practice charts are listed in [songs/manifest.json](songs/manifest.json) and load on demand. Simple synthesized drum-and-bass backing sounds are generated in your browser during play, not streamed from commercial recordings.
 
@@ -28,6 +28,15 @@ The browser app is committed at [index.html](index.html). Five original practice
 **Important:** Loading a music file does not transcribe drums or invent a chart. The app requires a matching JSON drum chart; the bundled charts are original practice grooves, not charts for commercial recordings.
 
 On Chrome/Edge the audio file stays in memory on your computer, not in the GitHub repository. Browser music decoding and playback-rate behavior vary by format and browser.
+
+## v0.5.1 practice-loop and timing fixes
+
+- Set **From bar** and **To bar** in **Backing music & section practice**.
+- Keep **Loop selected bars** checked and choose **Play selected bars**. Looping repeats only the selected region; after the first count-in, repeats start without another count-in.
+- Deselect **Loop selected bars** to play the section once and stop.
+- The chart duration calculation now recognizes the supplied eight-bar Garage Rock JSON correctly (the last note is at beat 31.5).
+- The falling note's leading edge meets the strike line at the expected beat. Hit scoring itself is immediate upon receiving a MIDI Note On; missed notes still wait until the end of the timing tolerance.
+- The duplicated blurry drum artwork in the note highway was removed; the separate bottom icon buttons remain.
 
 ## Enable sharing with GitHub Pages
 
