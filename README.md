@@ -2,7 +2,7 @@
 
 Free, browser-based rhythm-game drum trainer for Alesis Nitro Mesh and other USB-MIDI electronic drums.
 
-## Current status (v0.5.1 beta)
+## Current status (v0.5.3 beta)
 
 The browser app is committed at [index.html](index.html). Five original practice charts are listed in [songs/manifest.json](songs/manifest.json) and load on demand. Simple synthesized drum-and-bass backing sounds are generated in your browser during play, not streamed from commercial recordings.
 
@@ -37,6 +37,16 @@ On Chrome/Edge the audio file stays in memory on your computer, not in the GitHu
 - The chart duration calculation now recognizes the supplied eight-bar Garage Rock JSON correctly (the last note is at beat 31.5).
 - The falling note's leading edge meets the strike line at the expected beat. Hit scoring itself is immediate upon receiving a MIDI Note On; missed notes still wait until the end of the timing tolerance.
 - The duplicated blurry drum artwork in the note highway was removed; the separate bottom icon buttons remain.
+
+## v0.5.3: Seamless audio loops and integrated drum icons
+
+For imported audio files up to 12 MB that the browser can decode, Nitro Beat Lab now uses an AudioBufferSourceNode with `loopStart` and `loopEnd` aligned to the selected chart bar boundaries. The audio loops on the browser audio clock rather than waiting for the next screen redraw; this prevents audio from the next bar from leaking across the loop point. The visuals and note judgments follow the same audio clock, and the chart resets its scoring each time the selected section repeats.
+
+- Choose a JSON drum chart, import a matching MP3/WAV, select **From bar** and **To bar**, enable **Loop selected bars**, and press **Play selected bars**.
+- The app shows **seamless section loops ready** after decoding supported short audio files; longer/undecodable tracks use the older media-element fallback and may not loop seamlessly.
+- Changing tempo in seamless loop mode changes the pitch of the backing audio; pitch-preserving time stretching is not yet implemented.
+- The separate icon buttons now occupy the bottom of the note highway, directly below the white strike line, rather than appearing as another detached row.
+- Notes and measure lines after the end of the selected practice region are hidden during a loop.
 
 ## Enable sharing with GitHub Pages
 
