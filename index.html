@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nitro Beat Lab v0.5.3</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Nitro Beat Lab v0.6.0</title>
 <style>
 :root{font-family:system-ui,Segoe UI,sans-serif;color:#eaf0ff;background:#0c1221}*{box-sizing:border-box}body{margin:0}main{max-width:1180px;margin:auto;padding:18px}header,.actions,.controls{display:flex;gap:12px;align-items:center;flex-wrap:wrap}header{justify-content:space-between}h1{font-size:25px;margin:0}h2{font-size:16px;margin:0 0 12px}.dim{color:#a8b7d3;font-size:13px}.grid{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;margin-top:17px}.card{background:#172139;border:1px solid #354361;border-radius:14px;padding:16px;margin-bottom:14px}button,select,input{font:inherit}button,select{padding:10px;border:1px solid #586c95;background:#263653;color:#fff;border-radius:8px}button{cursor:pointer}button:hover{background:#3c5380}.primary{background:#5268e9}label{font-size:13px}input[type=range]{vertical-align:middle;max-width:130px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}.stat{background:#26344f;padding:11px;border-radius:8px}.stat b{display:block;font-size:21px}canvas{width:100%;height:auto;background:#090f1e;border-radius:8px}#drumpads{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;margin-top:10px}#drumpads button{font-size:11px;padding:10px 2px;border-bottom:5px solid var(--c)}#drumpads button.active{filter:brightness(1.9)}#log{height:150px;overflow:auto;background:#0b1325;border-radius:7px;padding:10px;white-space:pre-wrap;font:12px/1.5 Consolas,monospace;color:#b7f4d1}#maps{display:grid;gap:6px}.map{display:grid;grid-template-columns:80px 1fr 60px;align-items:center;font-size:12px;gap:5px}.map button{padding:5px}small{color:#a8b7d3}#status{color:#a3efcb}input[type=file]{max-width:210px}.songnotice{font-size:12px;color:#d7c58a}@media(max-width:870px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}
 
@@ -66,10 +66,35 @@ summary::marker{color:#a997ff}.settings-inner{padding:12px 0 4px;display:grid;ga
 #highway #drumpads button.hit{background:#ffffffdb;color:#111}
 #highway #drumpads .drum-art{height:52%;width:56%;min-height:16px}
 @media(max-width:870px){#highway #drumpads button{font-size:8px;padding:1px}#highway #drumpads .drum-art{height:50%;width:65%}}
+
+/* v0.6: focused instrument practice; keep controls compact and accessible */
+.focus-panel{padding:13px 14px;border:1px solid #445b99;border-radius:11px;background:#111e3b;display:grid;gap:11px}
+.focus-head{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:space-between}
+.focus-buttons{display:flex;flex-wrap:wrap;gap:6px}
+.focus-buttons button{padding:7px 11px;font-size:12px}
+.focus-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+.focus-grid label{display:flex;gap:7px;align-items:center;padding:7px 9px;border:1px solid #486291;border-radius:8px;background:#253457;font-size:12px;cursor:pointer}
+.focus-grid label:has(input:checked){border-color:var(--focus-color);background:#2f3d66}
+.focus-grid input{accent-color:#b8aaff}
+#focusSummary{color:#b7c9ee;font-size:12px}
+#drumpads button.unscored{opacity:.43;filter:saturate(.45)}
+@media(max-width:850px){.focus-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 </style></head>
-<body><main><header><div><h1>🥁 Nitro Beat Lab <small>v0.5.3</small></h1><div class="dim">Alesis Nitro Mesh · original song library · no subscriptions</div></div><div class="actions"><span id="midi">MIDI disconnected</span><button id="connect" class="primary">Connect MIDI Kit</button></div></header>
+<body><main><header><div><h1>🥁 Nitro Beat Lab <small>v0.6.0</small></h1><div class="dim">Alesis Nitro Mesh · original song library · no subscriptions</div></div><div class="actions"><span id="midi">MIDI disconnected</span><button id="connect" class="primary">Connect MIDI Kit</button></div></header>
 <div class="grid" id="layout"><section>
 <div class="card settings-card" id="settings"><button type="button" class="settings-toggle" id="settingsToggle" aria-expanded="true" aria-controls="settingsBody"><span><span class="settings-title">Song &amp; Practice Settings</span><span class="settings-summary" id="settingsSummary">Choose a song and set up your practice</span></span><span class="settings-chevron" aria-hidden="true">⌄</span></button><div class="settings-inner" id="settingsBody"><div class="controls"><label>Song <select id="song"><option value="">Loading library…</option></select></label><label>Tempo <input id="tempo" type="range" min="45" max="150" step="1" value="80"><b id="bpm">80 BPM</b></label><label>Note travel <select id="travel"><option value="2">2 sec</option><option value="3" selected>3 sec</option><option value="4">4 sec</option></select></label></div><p class="dim" id="description">Select a practice song. Audio is generated locally to match the chart.</p><div class="controls"><label>Import your own JSON chart <input id="chartfile" type="file" accept=".json,application/json"></label><span class="dim" id="importstatus"></span></div><div class="layout-tools"><strong>Reorder lanes</strong><span class="dim">Use ◀ and ▶ to match your physical kit.</span><button id="resetorder">Reset order</button></div><div id="laneorder" aria-label="Lane order"></div>
+<div class="focus-panel" id="focusPanel">
+  <div class="focus-head"><strong>Learn a part · Instrument focus</strong><span id="focusSummary" role="status">All instruments scored</span></div>
+  <div class="focus-buttons">
+    <button type="button" id="focusAll">Full kit</button>
+    <button type="button" id="focusRock">Kick + snare + hi-hat</button>
+    <button type="button" id="focusFeet">Kick only</button>
+    <button type="button" id="focusHands">Snare + hi-hat</button>
+    <button type="button" id="focusToms">Toms + cymbals</button>
+  </div>
+  <div id="focusGrid" class="focus-grid" role="group" aria-label="Choose instruments to practice"></div>
+  <span class="dim">Only selected instruments show falling notes and count toward your score. The full backing track stays audible.</span>
+</div>
 <div class="audio-tools" aria-label="Backing audio and practice section">
 <strong>Backing music &amp; section practice</strong>
 <div class="controls"><label>Load your own MP3/WAV <input type="file" id="audiofile" accept="audio/*,.mp3,.wav,.m4a,.ogg"></label><button type="button" id="clearAudio">Remove audio</button><span id="trackName">Using synthesized practice groove</span></div>
@@ -102,6 +127,38 @@ function artElement(name){
 }
 let laneOrder=(()=>{try{const saved=JSON.parse(localStorage.getItem('nitroLaneOrder')||'null');return Array.isArray(saved)&&saved.length===8&&saved.every(n=>names.includes(n))&&new Set(saved).size===8?saved:names.slice()}catch{return names.slice()}})();
 let flashes=[],feedbackUntil=0, laneBursts=[];
+let focusLanes=new Set(names);
+function focusNote(n){return focusLanes.has(n.lane)}
+function initFocus(){
+ const parent=$('focusGrid');parent.replaceChildren();
+ names.forEach((n,i)=>{
+   const label=document.createElement('label');
+   label.style.setProperty('--focus-color',colors[i]);
+   const control=document.createElement('input');control.type='checkbox';control.checked=focusLanes.has(n);
+   control.dataset.lane=n;control.setAttribute('aria-label','Practice '+titles[i]);
+   control.onchange=()=>{
+     const selected=[...parent.querySelectorAll('input:checked')].map(x=>x.dataset.lane);
+     if(!selected.length){control.checked=true;return}
+     setFocus(selected);
+   };
+   const text=document.createElement('span');text.textContent=titles[i];
+   label.append(control,text);parent.append(label);
+ });
+ updateFocusSummary();
+}
+function updateFocusSummary(){
+ const active=focusLanes.size;
+ $('focusSummary').textContent=active===8?'All 8 instruments scored':active+' of 8 instruments scored';
+ for(const n of names){const pad=$('pad-'+n);if(pad)pad.classList.toggle('unscored',!focusLanes.has(n))}
+}
+function setFocus(list){
+ focusLanes=new Set(list);
+ for(const control of $('focusGrid').querySelectorAll('input[data-lane]'))control.checked=focusLanes.has(control.dataset.lane);
+ updateFocusSummary();
+ // Changing the scored parts resets the current attempt without changing the audio or chart selection.
+ restart();
+}
+
 function showFeedback(text,color){$('feedback').textContent=text;$('feedback').style.color=color;feedbackUntil=performance.now()+650;setTimeout(()=>{if(performance.now()>=feedbackUntil)$('feedback').textContent=''},720)}
 function flash(lane,kind){
 const now=performance.now();
@@ -147,7 +204,7 @@ function bufferBeat(){
  return regionStart+(((p-regionEnd)%span)+span)%span;
 }
 function renewCycleNotes(){
- notes=chart.notes.map(n=>({...n,state:n.beat<regionStart||n.beat>=regionEnd?'skipped':'pending'}));
+ notes=chart.notes.map(n=>({...n,state:n.beat<regionStart||n.beat>=regionEnd||!focusNote(n)?'skipped':'pending'}));
  total=notes.filter(n=>n.state==='pending').length;
  score=hits=misses=wrong=streak=0;lastSound=Math.floor(regionStart)-1;flashes=[];laneBursts=[];
  hud();
@@ -195,7 +252,7 @@ function choose(c){chart=validate(c);playFrom=0;$('fromBar').value=1;$('toBar').
 async function loadLibrary(){try{const r=await fetch('songs/manifest.json');if(!r.ok)throw Error('Catalog unavailable');const m=await r.json();catalog=m.songs||[];const s=$('song');s.replaceChildren();for(const item of catalog){const o=document.createElement('option');o.value=item.chart;o.textContent=item.title+' ('+item.bpm+' BPM)';s.append(o)}s.onchange=selectSong;await selectSong()}catch(e){$('description').textContent='Built-in library unavailable: '+e.message+' — you can import a JSON chart';$('song').replaceChildren()}}
 async function selectSong(){const item=catalog.find(x=>x.chart===$('song').value);if(!item)return;try{const r=await fetch(item.chart);if(!r.ok)throw Error('Chart not found');choose(await r.json());$('description').textContent+=' · '+item.description}catch(e){$('status').textContent='Load failed: '+e.message}}
 $('chartfile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const c=JSON.parse(await f.text());choose(c);$('importstatus').textContent=' Chart loaded locally';$('song').value='';updateSettingsSummary();}catch(err){$('importstatus').textContent=' Import failed: '+err.message}};
-function restart(){playing=false;paused=false;pauseBeat=playFrom;lastSound=Math.floor(playFrom)-1;resetTrackTime();notes=chart?chart.notes.map(n=>({...n,state:n.beat<playFrom||n.beat>=regionEnd?'skipped':'pending'})):[];total=notes.filter(n=>n.state==='pending'&&n.beat<regionEnd).length;score=hits=misses=wrong=streak=0;flashes=[];laneBursts=[];$('feedback').textContent='';hud();$('play').textContent='▶ Start (Space)';$('status').textContent='Ready'}
+function restart(){playing=false;paused=false;pauseBeat=playFrom;lastSound=Math.floor(playFrom)-1;resetTrackTime();notes=chart?chart.notes.map(n=>({...n,state:n.beat<playFrom||n.beat>=regionEnd||!focusNote(n)?'skipped':'pending'})):[];total=notes.filter(n=>n.state==='pending'&&n.beat<regionEnd).length;score=hits=misses=wrong=streak=0;flashes=[];laneBursts=[];$('feedback').textContent='';hud();$('play').textContent='▶ Start (Space)';$('status').textContent='Ready'}
 function hud(){$('score').textContent=score;$('accuracy').textContent=hits+misses+wrong?Math.round(hits/(hits+misses+wrong)*100)+'%':'—';$('streak').textContent=streak;$('progress').textContent=(hits+misses+wrong)+' / '+total}
 function beat(){if(loopSource&&playing)return bufferBeat();if(audioTrack&&audioStarted&&playing)return audioTrack.currentTime*chart.bpm/60;return (performance.now()-beatStart)/(60000/tempo)}
 function audio(){if(!context)context=new(window.AudioContext||window.webkitAudioContext)();context.resume()}
@@ -206,7 +263,7 @@ if(playing){pauseBeat=beat();playing=false;paused=true;stopLoopSource();if(audio
 if(paused){beatStart=performance.now()-pauseBeat*60000/tempo;paused=false;if(audioTrack){audioStarted=false;audioStartAttempt=false;audioBlocked=false;if(!launchBufferLoop(pauseBeat,0)){resumeAudioBeat=pauseBeat;startTrack()}}}
 else{restart();const count=$('countin').checked&&!skipCountIn?countInBeats:0;beatStart=performance.now()+(count*60000/tempo)-playFrom*60000/tempo;lastSound=Math.floor(playFrom)-count-1;if(audioTrack){audioBlocked=false;if(!launchBufferLoop(playFrom,count)){if(count>0)primeAudio();else startTrack()}}}
 playing=true;$('play').textContent='Ⅱ Pause (Space)'}
-function hit(lane,art=null){const pad=$('pad-'+lane);if(pad){pad.classList.add('active');setTimeout(()=>pad.classList.remove('active'),115)}if(!playing){flash(lane,'tap');return}const b=beat()+offset/(60000/tempo);if(b<0){flash(lane,'tap');return}if(lane==='hat'&&art==='pedal'&&!notes.some(n=>n.state==='pending'&&n.art==='pedal'&&Math.abs(n.beat-b)<.19/(60/tempo)))return;let nearest=null,dist=99;for(const n of notes){if(n.state!=='pending'||n.lane!==lane)continue;const d=Math.abs(n.beat-b);if(d<dist){dist=d;nearest=n}}if(nearest&&dist<=.17/(60/tempo)){if(nearest.art&&nearest.art!==art){nearest.state='wrong';wrong++;streak=0;flash(lane,'wrong');showFeedback('✕ WRONG HI-HAT','#ff6e83');$('status').textContent='Wrong hi-hat: expected '+nearest.art}else{nearest.state='hit';hits++;streak++;flash(lane,'hit');const ms=dist*60000/tempo;score+=ms<55?100:ms<110?75:50;showFeedback(ms<55?'✦ PERFECT!':ms<110?'✓ GREAT!':'✓ GOOD!','#79ffad');$('status').textContent=ms<55?'PERFECT':ms<110?'GREAT':'GOOD'}}else{streak=0;flash(lane,'wrong');showFeedback('✕ EXTRA HIT','#ff6e83');$('status').textContent='Extra '+lane+' hit'}hud()}
+function hit(lane,art=null){const pad=$('pad-'+lane);if(pad){pad.classList.add('active');setTimeout(()=>pad.classList.remove('active'),115)}if(!playing){flash(lane,'tap');return}if(!focusLanes.has(lane)){flash(lane,'tap');return}const b=beat()+offset/(60000/tempo);if(b<0){flash(lane,'tap');return}if(lane==='hat'&&art==='pedal'&&!notes.some(n=>n.state==='pending'&&n.art==='pedal'&&Math.abs(n.beat-b)<.19/(60/tempo)))return;let nearest=null,dist=99;for(const n of notes){if(n.state!=='pending'||n.lane!==lane)continue;const d=Math.abs(n.beat-b);if(d<dist){dist=d;nearest=n}}if(nearest&&dist<=.17/(60/tempo)){if(nearest.art&&nearest.art!==art){nearest.state='wrong';wrong++;streak=0;flash(lane,'wrong');showFeedback('✕ WRONG HI-HAT','#ff6e83');$('status').textContent='Wrong hi-hat: expected '+nearest.art}else{nearest.state='hit';hits++;streak++;flash(lane,'hit');const ms=dist*60000/tempo;score+=ms<55?100:ms<110?75:50;showFeedback(ms<55?'✦ PERFECT!':ms<110?'✓ GREAT!':'✓ GOOD!','#79ffad');$('status').textContent=ms<55?'PERFECT':ms<110?'GREAT':'GOOD'}}else{streak=0;flash(lane,'wrong');showFeedback('✕ EXTRA HIT','#ff6e83');$('status').textContent='Extra '+lane+' hit'}hud()}
 function render(){
 requestAnimationFrame(render);
 // Process the end of the requested region BEFORE drawing the next frame.
@@ -222,7 +279,7 @@ ctx.fillStyle='#0a0d22';ctx.fillRect(0,0,w,h);
 for(let i=0;i<8;i++){
 const lane=laneOrder[i],k=names.indexOf(lane),x=i*cw;
 const gradient=ctx.createLinearGradient(x,0,x+cw,h);gradient.addColorStop(0,i%2?'#121b3c':'#1b2650');gradient.addColorStop(1,i%2?'#19265a':'#26326b');
-ctx.fillStyle=gradient;ctx.fillRect(x+2,0,cw-4,h);
+ctx.fillStyle=gradient;ctx.fillRect(x+2,0,cw-4,h);if(!focusLanes.has(lane)){ctx.fillStyle='#080c1baa';ctx.fillRect(x+2,0,cw-4,400)}
 ctx.strokeStyle=colors[k]+'70';ctx.lineWidth=2;ctx.strokeRect(x+3,0,cw-6,h);
 ctx.fillStyle=colors[k];ctx.font='bold 15px system-ui';ctx.textAlign='center';ctx.shadowColor=colors[k];ctx.shadowBlur=12;
 ctx.beginPath();ctx.arc(x+cw/2,hitY,15,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;
@@ -243,7 +300,7 @@ ctx.shadowColor=ink;ctx.shadowBlur=28;ctx.strokeStyle=ink;ctx.lineWidth=5;
 ctx.strokeRect(i*cw+4,2,cw-8,hitY+13);ctx.restore();
 }
 // Arcade note discs: distinct silhouettes, bright rim, dark center and articulation symbol.
-for(const n of notes){if(n.state!=='pending'||n.beat<regionStart||n.beat>=regionEnd)continue;
+for(const n of notes){if(n.state!=='pending'||n.beat<regionStart||n.beat>=regionEnd||!focusNote(n))continue;
 const y=hitY-20-(n.beat-b)*speed;if(y<-24||y>hitY+25)continue;
 const i=laneOrder.indexOf(n.lane),k=names.indexOf(n.lane),cx=i*cw+cw/2;
 const radius=25;
@@ -271,7 +328,12 @@ const bar=Math.max(1,Math.floor(Math.max(0,b)/4)+1);$('position').textContent='B
 else if(!paused){ctx.fillStyle='#fff';ctx.font='bold 24px system-ui';ctx.textAlign='center';ctx.fillText('PRESS START TO PLAY',w/2,120)}
 }
 for(let i=0;i<8;i++){const p=document.createElement('button');p.id='pad-'+names[i];p.append(artElement(names[i]),document.createTextNode(titles[i]));p.style.setProperty('--c',colors[i]);p.onclick=()=>hit(names[i],names[i]==='hat'?'closed':null);$('drumpads').append(p)}
-renderLaneOrder();renderPadOrder();
+renderLaneOrder();renderPadOrder();initFocus();
+$('focusAll').onclick=()=>setFocus(names);
+$('focusRock').onclick=()=>setFocus(['kick','snare','hat']);
+$('focusFeet').onclick=()=>setFocus(['kick']);
+$('focusHands').onclick=()=>setFocus(['snare','hat']);
+$('focusToms').onclick=()=>setFocus(['tom1','tom2','tom3','crash','ride']);
 function updateSettingsSummary(){const text=chart?.title||$('song').selectedOptions?.[0]?.textContent||'Choose a song';$('settingsSummary').textContent=text+' · '+tempo+' BPM'}
 function setSettingsOpen(open){$('settings').classList.toggle('is-closed',!open);$('settingsToggle').setAttribute('aria-expanded',String(open));localStorage.setItem('nitroSettingsExpanded',open?'1':'0')}
 $('settingsToggle').onclick=()=>setSettingsOpen($('settings').classList.contains('is-closed'));
