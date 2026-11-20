@@ -2,7 +2,7 @@
 
 Free, browser-based rhythm-game drum trainer for Alesis Nitro Mesh and other USB-MIDI electronic drums.
 
-## Current status (v0.5.3 beta)
+## Current status (v0.6.0 beta)
 
 The browser app is committed at [index.html](index.html). Five original practice charts are listed in [songs/manifest.json](songs/manifest.json) and load on demand. Simple synthesized drum-and-bass backing sounds are generated in your browser during play, not streamed from commercial recordings.
 
@@ -47,6 +47,18 @@ For imported audio files up to 12 MB that the browser can decode, Nitro Beat Lab
 - Changing tempo in seamless loop mode changes the pitch of the backing audio; pitch-preserving time stretching is not yet implemented.
 - The separate icon buttons now occupy the bottom of the note highway, directly below the white strike line, rather than appearing as another detached row.
 - Notes and measure lines after the end of the selected practice region are hidden during a loop.
+
+## v0.6.0: Learn a part (instrument focus)
+
+Open **Song & Practice Settings → Learn a part · Instrument focus** to choose which instruments you want to practice. Presets include Full kit; Kick + snare + hi-hat; Kick only; Snare + hi-hat; Toms + cymbals. Individual drum checkboxes are also available.
+
+- Falling notes appear only for the selected instruments. Other instrument lanes remain dimmed as positional references.
+- Accuracy, scoring, missed notes, and the current total are based on only the selected instruments. Striking a non-selected pad still triggers a visual pulse, but isn't judged.
+- Changing the instrument selection resets the current attempt. Imported music, chart, tempo, MIDI mappings and practice region remain intact.
+- Imported audio or built-in backing sounds play normally, regardless of the focused instruments. For audio-less practice, you can disable the backing groove and leave the metronome enabled.
+- Full kit restores all eight scored instruments.
+
+This is a beta: test the mode with the Nitro Mesh, particularly a short bars 3–4 loop, before treating the practice scoring as calibrated.
 
 ## Enable sharing with GitHub Pages
 
